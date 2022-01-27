@@ -19,7 +19,7 @@ while True:
     detections = net.Detect(img)
     display.Render(img)
     display.SetStatus("Object Detection | Network {:.0f} FPS".format(net.GetNetworkFPS()))
-    #sleep(1)
+    sleep(10)
     #exit(0)
 print("hello")
 input_img = jetson.utils.loadImage("peds_0.jpg")
