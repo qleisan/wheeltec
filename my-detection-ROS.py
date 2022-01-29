@@ -21,28 +21,23 @@ net = jetson.inference.detectNet("ssd-mobilenet-v2", threshold=0.5)
 
 def image_callback(msg):
     print("Received an image!")
-    print(msg.encoding, msg.width, msg.height)
-    print(type(msg.data))
+    #print(msg.encoding, msg.width, msg.height)
+    #print(type(msg.data))
 
     im = np.frombuffer(msg.data, dtype=np.uint8).reshape(msg.height, msg.width, -1)
-    print(im.shape)
+    #print(im.shape)
 
-    cuda_img = jetson.utils.cudaAllocMapped(width=640, height=480, format='rgb8')
-    cepa = jetson.utils.cudaToNumpy(cuda_img)
+    depa = jetson.utils.cudaFromNumpy(im)
+    #print(type(depa))
+    #jetson.utils.cudaDrawCircle(depa, (50,50), 25, (0,255,127,200))
 
-    for y in range(0,msg.height):
-        for x in range(0,msg.width):
-            cepa[y,x,0] = im[y,x,0]
-            cepa[y,x,1] = im[y,x,1]
-            cepa[y,x,2] = im[y,x,2]
-
-    jetson.utils.saveImage("cuda_test.jpg", cuda_img)
+    jetson.utils.saveImage("cuda_test.jpg", depa)
     print("--------------")
     # TODO: for now load another image with interesting content
-    img = jetson.utils.loadImage("peds_0.jpg")
+    # img = jetson.utils.loadImage("peds_0.jpg")
     #img = jetson.utils.loadImage("my-recognition-python/polar_bear.jpg")
-    #detections = net.Detect(img)
-    detections = net.Detect(cuda_img)
+    # detections = net.Detect(img)
+    detections = net.Detect(depa)
     for detection in detections:
         print(net.GetClassDesc(detection.ClassID))
 
